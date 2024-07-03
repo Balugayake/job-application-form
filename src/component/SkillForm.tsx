@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TextField, Button, Box } from '@mui/material';
 import { RootState } from '../store';
@@ -19,7 +19,22 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     technicalSkills: technicalSkills || '',
     certifications: certifications || '',
   });
+  const [errors, setErrors] = useState("");
 
+  const validateField = (value: string) => {
+    let error = '';
+    if (!value) {
+      error = 'Required';
+    } else if (value.length < 2) {
+      error = 'Enter at least 1 Technical Skill';
+    }
+    setErrors(error);
+    return error === '';
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    validateField(event.target.value);
+  };
   useEffect(() => {
     setValues({
       technicalSkills: technicalSkills || '',
@@ -33,6 +48,7 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(!errors)
     dispatch(updateSkills(values));
     nextStep();
   };
@@ -46,12 +62,15 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
       sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 3 }}
     >
       <TextField
-        label="Technical Skills"
+        label="Technical Skills *"
         variant="outlined"
         fullWidth
         margin="normal"
         value={values.technicalSkills}
         onChange={handleChange('technicalSkills')}
+        onBlur={handleBlur}
+        error={!!errors}
+        helperText={errors}
       />
       <TextField
         label="Certifications"

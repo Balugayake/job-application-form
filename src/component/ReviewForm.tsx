@@ -110,7 +110,7 @@ console.log(education)
           <strong>Cover Letter:</strong> {additionalInfo.coverLetter}
         </Typography>
         <Typography variant="body1" paragraph>
-          <strong>Resume:</strong> {additionalInfo.resume && additionalInfo.resume.name}
+          <strong>Resume:</strong> {additionalInfo.resume && additionalInfo?.resume.name}
         </Typography>
       </Paper>
       <Grid container spacing={2}>

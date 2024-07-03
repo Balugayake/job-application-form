@@ -134,6 +134,7 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
           label="Name *"
           name="name"
           autoComplete="name"
+          inputProps={{ type: 'text',maxLength: 30,minLength: 2 }}
           autoFocus
           value={personalInfo.name}
           onChange={handleChange}
@@ -148,6 +149,7 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
           id="email"
           label="Email Address *"
           name="email"
+          inputProps={{ type: 'email',maxLength: 30 }}
           autoComplete="email"
           value={personalInfo.email}
           onChange={handleChange}
@@ -162,6 +164,7 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
           id="phone"
           type="number"
           // pattern="[0-9]{10}"
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' ,min:10,max:10}}
           label="Phone Number"
           name="phone"
           autoComplete="phone"
@@ -173,16 +176,16 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
         />
         <TextField
           margin="normal"
-         
           required
           fullWidth
           id="address"
           label="Address"
           name="address"
+          inputProps={{ maxLength: 60 }}
           autoComplete="address"
           value={personalInfo.address}
           onChange={handleChange}
-          onBlur={(e)=>validatePhone(e)}
+          onBlur={(e)=>validateAddress(e)}
           error={Boolean(allError.addressError)}
           helperText={allError.addressError}
         />

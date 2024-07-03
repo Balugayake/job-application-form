@@ -29,7 +29,7 @@ export interface PersonalInfo {
   
   export interface AdditionalInfo {
     coverLetter: string;
-    resume: File | null;
+    resume?: File | null;
   }
   
   export interface FormState {
