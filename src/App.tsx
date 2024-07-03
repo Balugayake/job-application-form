@@ -52,7 +52,7 @@ function App() {
         <Route path="/step4" element={<SkillsForm nextStep={nextStep} prevStep={prevStep} />} />
         <Route path="/step5" element={<AdditionalInfoForm nextStep={nextStep} prevStep={prevStep} />} />
         <Route path="/step6" element={<ReviewForm prevStep={prevStep} handleSubmit={handleSubmit} />} />
-       
+        <Route path="*" element={<Navigate to="/step1" />}/>
       </Routes>
     </div>
   );
