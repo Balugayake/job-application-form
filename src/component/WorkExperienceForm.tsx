@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { updateWorkExperience } from "../features/form/form.slice";
@@ -64,25 +65,28 @@ const WorkExperienceForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     );
     setWorkExperience(updatedExperience);
   };
-
-  const validateField = (field: string, value1: string | number,id:number) => {
-  
+  const [isValidData, setIsValidData] = useState<boolean>();
+  const validateField = (
+    field: string,
+    value1: string | number,
+    id: number
+  ) => {
     let error = "";
-    const value= value1.toString();
+    const value = value1.toString();
     if (!value) {
       error = "Required";
     }
     if (field === "companyName" && value.length > 50) {
       error = "Company name should be less than 50 characters";
-    }else if(field === "companyName" && value.length < 2 && !error){
+    } else if (field === "companyName" && value.length < 2 && !error) {
       error = "Company name should be greater than 2 characters";
-    }else if(field === "jobTitle" && value.length > 30){
+    } else if (field === "jobTitle" && value.length > 30) {
       error = "Job title should be less than 30 characters";
-    }else if(field === "jobTitle" && value.length < 4 && !error){
+    } else if (field === "jobTitle" && value.length < 4 && !error) {
       error = "Job title should be greater than 4 characters";
-    }else if(field === "duration" && value.length > 40){
+    } else if (field === "duration" && value.length > 40) {
       error = "Duration should be less than 40 characters";
-    }else if(field === "duration" && value.length < 0){
+    } else if (field === "duration" && value.length < 0) {
       error = "Enter the Positive Number";
     }
     setErrors((prevErrors) => ({
@@ -91,25 +95,34 @@ const WorkExperienceForm: React.FC<Props> = ({ nextStep, prevStep }) => {
         ...prevErrors[id],
         [field]: error,
       },
-  }));
-  console.log(field, value,id,errors)
-return error === "";
-};
+    }));
+    if (error) {
+      setIsValidData(true);
+    } else {
+      setIsValidData(false);
+    }
+    return error === "";
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValid = workExperience.every((experience) =>
-      ['companyName', 'jobTitle', 'duration'].every((field) =>
-        validateField( field as keyof WorkExperience, experience[field as keyof WorkExperience],experience.id)
+      ["companyName", "jobTitle", "duration"].every((field) =>
+        validateField(
+          field as keyof WorkExperience,
+          experience[field as keyof WorkExperience],
+          experience.id
+        )
       )
     );
-    if(isValid){
-    dispatch(updateWorkExperience(workExperience));
-    nextStep();
+    if (isValid) {
+      dispatch(updateWorkExperience(workExperience));
+      nextStep();
     }
   };
 
   return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, mt: 3, mx: "auto", maxWidth: "80%"}}>
     <form onSubmit={handleSubmit}>
       <h2>Work Experience</h2>
       <TableContainer component={Paper}>
@@ -134,13 +147,12 @@ return error === "";
                       handleChange(experience.id, "companyName", e.target.value)
                     }
                     onBlur={(e) => {
-                      const value=e.target.value
-                      validateField("companyName", value,experience.id)}
-                    }
+                      const value = e.target.value;
+                      validateField("companyName", value, experience.id);
+                    }}
                     error={Boolean(errors[experience.id]?.companyName)}
                     helperText={errors[experience.id]?.companyName}
                     fullWidth
-
                   />
                 </TableCell>
                 <TableCell>
@@ -151,9 +163,9 @@ return error === "";
                       handleChange(experience.id, "jobTitle", e.target.value)
                     }
                     onBlur={(e) => {
-                      const value=e.target.value
-                      validateField("jobTitle", value,experience.id)}
-                    }
+                      const value = e.target.value;
+                      validateField("jobTitle", value, experience.id);
+                    }}
                     error={Boolean(errors[experience.id]?.jobTitle)}
                     helperText={errors[experience.id]?.jobTitle}
                     fullWidth
@@ -163,15 +175,15 @@ return error === "";
                   <TextField
                     value={experience.duration}
                     type="number"
-                    InputProps={{ inputProps: { min: 0 ,max: 40} }}
+                    InputProps={{ inputProps: { min: 0, max: 40 } }}
                     onChange={(e) =>
                       handleChange(experience.id, "duration", e.target.value)
                     }
                     onBlur={(e) => {
-                      const value=e.target.value
-                      validateField("duration", value,experience.id)}
-                    }
-                    error={Boolean(errors[experience.id]?.duration)} 
+                      const value = e.target.value;
+                      validateField("duration", value, experience.id);
+                    }}
+                    error={Boolean(errors[experience.id]?.duration)}
                     helperText={errors[experience.id]?.duration}
                   />
                 </TableCell>
@@ -210,11 +222,14 @@ return error === "";
           color="primary"
           type="submit"
           style={{ marginTop: "10px" }}
+          disabled={isValidData ?? true}
+         
         >
           Next
         </Button>
       </div>
     </form>
+    </Box>
   );
 };
 

@@ -34,6 +34,9 @@ const formSlice = createSlice({
     updateAdditionalInfo: (state, action: PayloadAction<AdditionalInfo>) => {
       state.additionalInfo = action.payload;
     },
+    resetForm(state) {
+      Object.assign(state, initialState);
+    },
   },
 });
 
@@ -43,6 +46,7 @@ export const {
   updateWorkExperience,
   updateSkills,
   updateAdditionalInfo,
+  resetForm,
 } = formSlice.actions;
 
 export default formSlice.reducer;

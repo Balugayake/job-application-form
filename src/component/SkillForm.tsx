@@ -48,7 +48,7 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(!errors)
+    
     dispatch(updateSkills(values));
     nextStep();
   };
@@ -59,8 +59,9 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
       onSubmit={handleSubmit}
       noValidate
       autoComplete="off"
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 3 }}
+      sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, mt: 2, mx: "auto", maxWidth: "80%"}}
     >
+      <h2>Skills And Certifications</h2>
       <TextField
         label="Technical Skills *"
         variant="outlined"
@@ -80,11 +81,11 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
         value={values.certifications}
         onChange={handleChange('certifications')}
       />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+      <Box sx={{ display: 'flex', gap: '10px' }}>
         <Button variant="contained" color="secondary" onClick={prevStep}>
           Previous
         </Button>
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" disabled={!!errors ?? true} >
           Next
         </Button>
       </Box>

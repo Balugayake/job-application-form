@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Education } from "../features/types/type";
 import { updateEducation } from "../features/form/form.slice";
@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
 } from "@mui/material";
 import { RootState } from "../store";
 
@@ -46,7 +47,7 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
       )
     );
   };
-
+  const [isValidData, setIsValidData] = useState<boolean>();
   const validateField = (
     level: string,
     field: keyof Education,
@@ -81,6 +82,11 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
         [field]: error,
       },
     }));
+    if (error) {
+      setIsValidData(true);
+    } else {
+      setIsValidData(false);
+    }
     return error === "";
   };
   const handleBlur = (
@@ -91,7 +97,8 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     const { value } = e.target;
     validateField(level, field, value);
   };
-
+  
+ 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValid = education.every((edu) =>
@@ -105,7 +112,9 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     }
   };
 
+
   return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, mt: 3, mx: "auto", maxWidth: "80%"}}>
     <form onSubmit={handleSubmit} className="container mt-5">
       <h2>Education</h2>
       <TableContainer component={Paper}>
@@ -133,6 +142,7 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
                     maxRows={2}
                     required
                     helperText={errors[edu.level]?.board}
+                    fullWidth
                   />
                 </TableCell>
                 <TableCell>
@@ -168,11 +178,12 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
         >
           Previous
         </Button>
-        <Button variant="contained" color="primary" type="submit">
+        <Button variant="contained" color="success" type="submit" disabled={isValidData ?? true}>
           Next
         </Button>
       </div>
     </form>
+    </Box>
   );
 };
 

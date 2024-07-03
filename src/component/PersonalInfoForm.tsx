@@ -112,6 +112,7 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
     setAllError({...allError,addressError:""})
   }
 }
+const isError=allError.nameError || allError.emailError || allError.phoneError || allError.addressError
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -119,6 +120,9 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
         onSubmit={handleSubmit}
         sx={{
           mt: 3,
+          p: 5,
+          boxShadow: 2,
+          borderRadius: 2,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -164,7 +168,7 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
           id="phone"
           type="number"
           // pattern="[0-9]{10}"
-          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' ,min:10,max:10}}
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' ,minLength: 10,maxLength: 10 }}
           label="Phone Number"
           name="phone"
           autoComplete="phone"
@@ -194,6 +198,8 @@ const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEle
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={Boolean(isError)}
+         
         >
           Next
         </Button>

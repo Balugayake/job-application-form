@@ -27,7 +27,7 @@ const ReviewForm: React.FC<Props> = ({ handleSubmit, prevStep }) => {
   } = formState;
 console.log(education)
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: 4,mx:"auto",maxWidth:"80%" }}>
       <Typography variant="h2" gutterBottom>
         Review Your Application
       </Typography>
@@ -115,12 +115,12 @@ console.log(education)
       </Paper>
       <Grid container spacing={2}>
         <Grid item>
-          <Button variant="contained" color="secondary" onClick={prevStep}>
+          <Button variant="contained" color="primary" onClick={prevStep}>
             Previous
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+          <Button variant="contained" color="success" onClick={handleSubmit}>
             Submit Application
           </Button>
         </Grid>
