@@ -54,13 +54,16 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     value: string
   ) => {
     let error = "";
+    const boardPattern = /^(?!^\d+$)[a-zA-Z0-9\s,.-]+$/;
     if (!value) {
       error = "Required";
     } else if (field === "board" && value.length > 50) {
       error = "Board/University name cannot exceed 50 characters";
     } else if (field === "board" && value.length < 4) {
       error = "Board/University name cannot be less than 4 characters";
-    } else if (
+    } else if(field === "board" && !boardPattern.test(value)) {
+      error= 'Board/University contain both letters and numbers';
+    }else if (
       field === "cgpa" &&
       (isNaN(Number(value)) || Number(value) < 0 || Number(value) > 10)
     ) {

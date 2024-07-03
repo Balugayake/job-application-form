@@ -23,10 +23,14 @@ const SkillForm: React.FC<Props> = ({ nextStep, prevStep }) => {
 
   const validateField = (value: string) => {
     let error = '';
+    const Pattern = /^(?!^\d+$)[a-zA-Z0-9\s,.-]+$/;
     if (!value) {
       error = 'Required';
     } else if (value.length < 2) {
       error = 'Enter at least 1 Technical Skill';
+    }
+    if(value && !Pattern.test(value)) {
+      error = 'Enter alphnumeric characters only';
     }
     setErrors(error);
     return error === '';

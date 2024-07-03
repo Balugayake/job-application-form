@@ -12,6 +12,7 @@ import {
   Alert,
 } from '@mui/material';
 import { RootState } from '../store';
+import { addEmitHelpers } from 'typescript';
 
 interface Props {
   nextStep: () => void;
@@ -62,15 +63,24 @@ const [allError,setAllError]=useState({
   phoneError:"",
   addressError:""
 })
+
 const validateName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   const { value } = e.target;
-  if(!value){
-    setAllError({...allError,nameError:"Name is required"})
-    return
+  const namePattern = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/; 
+
+  if (!value) {
+    setAllError({ ...allError, nameError: 'Name is required' });
+    return;
   }
-  if(value ){
-    setAllError({...allError,nameError:""})}
-}
+
+  if (!namePattern.test(value)) {
+    setAllError({ ...allError, nameError: 'Name must contain only alphabetical characters' });
+    return;
+  }
+  if(value){
+    setAllError({...allError,nameError:""})
+  }
+};
 const validateEmail = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   const { value } = e.target;
   if(!value){
@@ -103,10 +113,15 @@ const validatePhone = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEleme
 }
 const validateAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   const { value } = e.target;
+  const addressPattern = /^(?!^\d+$)[a-zA-Z0-9\s,.-]+$/;
   if(!value){
 
     setAllError({...allError,addressError:"Address is required"})
     return
+  }
+  if (!addressPattern.test(value)) {
+    setAllError({ ...allError, addressError: 'Address must contain both letters and numbers' });
+    return;
   }
   if(value){
     setAllError({...allError,addressError:""})

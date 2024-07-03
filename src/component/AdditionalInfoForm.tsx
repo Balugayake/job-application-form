@@ -5,6 +5,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { updateAdditionalInfo } from "../features/form/form.slice";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface Props {
   nextStep: () => void;
@@ -33,8 +34,12 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
 
   const validateField = (value: string) => {
     let error = "";
+    const Pattern = /^(?!^\d+$)[a-zA-Z0-9\s,.-]+$/;
     if (!value) {
       error = "Required";
+    }
+    if (value && !Pattern.test(value)) {
+      error = "Enter alphnumeric characters only";
     }
     setErrors(error);
     return error === "";
@@ -54,7 +59,15 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
       component="form"
       onSubmit={handleSubmit}
       className="container mt-5"
-      sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, mt: 3, mx: "auto", maxWidth: "80%"}}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 2,
+        mt: 3,
+        mx: "auto",
+        maxWidth: "80%",
+      }}
     >
       <Typography variant="h3">Additional Information</Typography>
       <Box sx={{ marginBottom: 3 }}>
@@ -96,6 +109,7 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
             name="resume"
             onChange={handleFileChange}
             style={{ display: "none" }}
+            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           />
           <Button
             variant="contained"
@@ -111,7 +125,7 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
           )}
         </label>
       </Box>
-      <Box sx={{ display: "flex" ,gap: 4 }}>
+      <Box sx={{ display: "flex", gap: 4 }}>
         <Button variant="contained" color="secondary" onClick={prevStep}>
           Previous
         </Button>
@@ -119,7 +133,14 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
           type="submit"
           variant="contained"
           color="success"
-          onClick={nextStep}
+          onClick={() => {
+            if (!additionalInfo.coverLetter || !additionalInfo.resume) {
+              toast.error("Please Upload Cover Letter and Resume");
+            }
+
+            nextStep();
+          }}
+          disabled={!additionalInfo.coverLetter || !additionalInfo.resume}
         >
           Next
         </Button>

@@ -71,22 +71,29 @@ const WorkExperienceForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     value1: string | number,
     id: number
   ) => {
+    console.log(value1,typeof value1)
     let error = "";
     const value = value1.toString();
     if (!value) {
       error = "Required";
     }
+    const Pattern = /^(?!^\d+$)[a-zA-Z0-9\s,.-]+$/;
     if (field === "companyName" && value.length > 50) {
       error = "Company name should be less than 50 characters";
-    } else if (field === "companyName" && value.length < 2 && !error) {
+    } else if(field === "companyName" && !Pattern.test(value)) {
+      error = "Company name should be alphanumeric";
+    }
+    else if (field === "companyName" && value.length < 2 && !error) {
       error = "Company name should be greater than 2 characters";
     } else if (field === "jobTitle" && value.length > 30) {
       error = "Job title should be less than 30 characters";
     } else if (field === "jobTitle" && value.length < 4 && !error) {
       error = "Job title should be greater than 4 characters";
-    } else if (field === "duration" && value.length > 40) {
+    }else if(field === "jobTitle" && !Pattern.test(value)) {
+      error = "jobTitle name should be alphanumeric";
+    } else if (field === "duration" && Number(value) > 40) {
       error = "Duration should be less than 40 characters";
-    } else if (field === "duration" && value.length < 0) {
+    } else if (field === "duration" && Number(value) < 0) {
       error = "Enter the Positive Number";
     }
     setErrors((prevErrors) => ({
@@ -175,7 +182,8 @@ const WorkExperienceForm: React.FC<Props> = ({ nextStep, prevStep }) => {
                   <TextField
                     value={experience.duration}
                     type="number"
-                    InputProps={{ inputProps: { min: 0, max: 40 } }}
+                    InputProps={{ inputProps: {min: 0,max: 40} }}
+                    
                     onChange={(e) =>
                       handleChange(experience.id, "duration", e.target.value)
                     }
