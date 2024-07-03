@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Education } from '../features/types/type';
-import { updateEducation } from '../features/form/form.slice';
-import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { RootState } from '../store';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Education } from "../features/types/type";
+import { updateEducation } from "../features/form/form.slice";
+import {
+  Button,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { RootState } from "../store";
 
 interface Props {
   nextStep: () => void;
@@ -12,12 +22,23 @@ interface Props {
 
 const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
   const dispatch = useDispatch();
-  const educationFromStore = useSelector((state: RootState) => state.form.education);
-  const [education, setEducation] = useState<Education[]>(educationFromStore)
+  const educationFromStore = useSelector(
+    (state: RootState) => state.form.education
+  );
+  const [education, setEducation] = useState<Education[]>(educationFromStore);
 
-  const [editing, setEditing] = useState<{ level: string | null; field: keyof Education | null }>({ level: null, field: null });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, level: string, field: keyof Education) => {
+  const [editing, setEditing] = useState<{
+    level: string | null;
+    field: keyof Education | null;
+  }>({ level: null, field: null });
+  const [errors, setErrors] = useState<{
+    [key: string]: { [key in keyof Education]?: string };
+  }>({});
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    level: string,
+    field: keyof Education
+  ) => {
     const { value } = e.target;
     setEducation((prevEducation) =>
       prevEducation.map((edu) =>
@@ -26,16 +47,62 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
     );
   };
 
-
-
-  const handleSave = () => {
-    setEditing({ level: null, field: null });
+  const validateField = (
+    level: string,
+    field: keyof Education,
+    value: string
+  ) => {
+    let error = "";
+    if (!value) {
+      error = "Required";
+    } else if (field === "board" && value.length > 50) {
+      error = "Board/University name cannot exceed 50 characters";
+    } else if (field === "board" && value.length < 4) {
+      error = "Board/University name cannot be less than 4 characters";
+    } else if (
+      field === "cgpa" &&
+      (isNaN(Number(value)) || Number(value) < 0 || Number(value) > 10)
+    ) {
+      error = "Invalid CGPA";
+    } else if (field === "year" && Number(value) < 1900) {
+      error = "Year should be greater than 1900";
+    } else if (
+      field === "year" &&
+      (isNaN(Number(value)) ||
+        Number(value) < 1900 ||
+        Number(value) > new Date().getFullYear())
+    ) {
+      error = "Invalid Year";
+    }
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [level]: {
+        ...prevErrors[level],
+        [field]: error,
+      },
+    }));
+    return error === "";
+  };
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    level: string,
+    field: keyof Education
+  ) => {
+    const { value } = e.target;
+    validateField(level, field, value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(updateEducation(education));
-    nextStep();
+    const isValid = education.every((edu) =>
+      ['school', 'board', 'cgpa', 'year'].every((field) =>
+        validateField(edu.level, field as keyof Education, edu[field as keyof Education] as string)
+      )
+    );
+    if (isValid) {
+      dispatch(updateEducation(education));
+      nextStep();
+    }
   };
 
   return (
@@ -45,7 +112,6 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
         <Table>
           <TableHead>
             <TableRow>
-             
               <TableCell>School/Institute Name</TableCell>
               <TableCell>Board/University</TableCell>
               <TableCell>CGPA</TableCell>
@@ -56,50 +122,50 @@ const EducationForm: React.FC<Props> = ({ nextStep, prevStep }) => {
             {education.map((edu) => (
               <TableRow key={edu.level}>
                 <TableCell>
-                    <TextField
-                      value={edu.school}
-                      autoFocus
-                    />
-                 
+                  <TextField value={edu.school} disabled />
                 </TableCell>
                 <TableCell>
-                
-                    <TextField
-                      value={edu.board}
-                      onChange={(e) => handleChange(e, edu.level, 'board')}
-                      onBlur={handleSave}
-                      autoFocus
-                    />
-                  
+                  <TextField
+                    value={edu.board}
+                    onChange={(e) => handleChange(e, edu.level, "board")}
+                    onBlur={(e) => handleBlur(e, edu.level, "board")}
+                    error={Boolean(errors[edu.level]?.board)}
+                    maxRows={2}
+                    required
+                    helperText={errors[edu.level]?.board}
+                  />
                 </TableCell>
                 <TableCell>
-                
-                    <TextField
-                      value={edu.cgpa}
-                      onChange={(e) => handleChange(e, edu.level, 'cgpa')}
-                      onBlur={handleSave}
-                      autoFocus
-                    />
-                 
+                  <TextField
+                    value={edu.cgpa}
+                    type="number"
+                    onChange={(e) => handleChange(e, edu.level, "cgpa")}
+                    onBlur={(e) => handleBlur(e, edu.level, "cgpa")}
+                    error={Boolean(errors[edu.level]?.cgpa)}
+                    helperText={errors[edu.level]?.cgpa}
+                  />
                 </TableCell>
                 <TableCell>
-                  
-                    <TextField
-                      value={edu.year}
-                      onChange={(e) => handleChange(e, edu.level, 'year')}
-                      onBlur={handleSave}
-                      autoFocus
-                    />
-                  
+                  <TextField
+                    value={edu.year}
+                    type="number"
+                    onChange={(e) => handleChange(e, edu.level, "year")}
+                    onBlur={(e) => handleBlur(e, edu.level, "year")}
+                    error={Boolean(errors[edu.level]?.year)}
+                    helperText={errors[edu.level]?.year}
+                  />
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{ marginTop: '20px' }}>
-        <Button variant="contained" onClick={prevStep} style={{ marginRight: '10px' }}>
+      <div style={{ marginTop: "20px" }}>
+        <Button
+          variant="contained"
+          onClick={prevStep}
+          style={{ marginRight: "10px" }}
+        >
           Previous
         </Button>
         <Button variant="contained" color="primary" type="submit">

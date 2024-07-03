@@ -12,6 +12,7 @@ export interface PersonalInfo {
     board: string;
     cgpa: string;
     year: string;
+    error?: string
   }
   
   export interface WorkExperience {
