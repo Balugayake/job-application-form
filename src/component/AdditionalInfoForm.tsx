@@ -140,7 +140,7 @@ const AdditionalInfoForm: React.FC<Props> = ({ nextStep, prevStep }) => {
 
             nextStep();
           }}
-          disabled={!additionalInfo.coverLetter || !additionalInfo.resume}
+          disabled={!additionalInfo.coverLetter || !additionalInfo.resume || Boolean(errors)}
         >
           Next
         </Button>
