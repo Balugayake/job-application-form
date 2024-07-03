@@ -7,8 +7,8 @@ import {
   Paper,
   Grid,
 } from '@mui/material';
-import { RootState } from '../store'; // Adjust the path as per your actual file structure
-import { Education } from '../features/types/type'; // Adjust the path as per your actual file structure
+import { RootState } from '../store';
+
 
 interface Props {
   handleSubmit: () => void;

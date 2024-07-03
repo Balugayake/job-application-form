@@ -11,7 +11,7 @@ const initialState: FormState = {
     { level: 'postGraduation', school: 'postGraduation', board: '', cgpa: '', year: '' },
   ],
   workExperience: [{id:1, companyName: '', jobTitle: '', duration: '' }],
-  skills: { technicalSkills: '', certifications: '' },
+  skills: { technicalSkills: '', certifications: '' }, 
   additionalInfo: { coverLetter: '', resume: null },
 };
 
